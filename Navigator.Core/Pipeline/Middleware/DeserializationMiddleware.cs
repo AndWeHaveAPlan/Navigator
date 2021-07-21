@@ -5,7 +5,6 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Navigator.Core;
 using Navigator.Exceptions;
-using Newtonsoft.Json.Linq;
 
 namespace Navigator.Pipeline.Middleware
 {
@@ -49,15 +48,20 @@ namespace Navigator.Pipeline.Middleware
             if (controllerAction.HasParamsArg)
                 requiredParamsLength -= 1;
 
-            JArray jArray = JArray.Parse(immateriumMessage.Body);
+            object[] jArray = immateriumMessage.Body as object[];
 
-            if (jArray.Count < requiredParamsLength)
+            if (jArray == null)
+            {
+                throw new NavigatorException("Invalid request arguments format");
+            }
+
+            if (jArray.Length < requiredParamsLength)
             {
                 // TODO: create exception class
                 throw new NavigatorException("Not enough arguments");
             }
 
-            if (!controllerAction.HasParamsArg && jArray.Count > totalParamsLength)
+            if (!controllerAction.HasParamsArg && jArray.Length > totalParamsLength)
             {
                 // TODO: create exception class
                 throw new NavigatorException("Too few arguments");
@@ -66,7 +70,7 @@ namespace Navigator.Pipeline.Middleware
             object[] invokeParams = new object[methodParameters.Length];
 
             int i = 0;
-            for (; i < jArray.Count; i++)
+            for (; i < jArray.Length; i++)
             {
                 if (methodParameters[i].GetCustomAttributes<ParamArrayAttribute>().Any())
                     break;
@@ -113,10 +117,10 @@ namespace Navigator.Pipeline.Middleware
         /// <param name="targetType"></param>
         /// <param name="obj"></param>
         /// <returns></returns>
-        private object Validate(Type targetType, JToken obj)
+        private object Validate(Type targetType, object obj)
         {
-            var resObject = obj.ToObject(targetType);
-
+            var resObject = Convert.ChangeType(obj, targetType);
+            //var r =obj as (targetType. )
             if (resObject == null && targetType.IsClass)
                 return null;
 

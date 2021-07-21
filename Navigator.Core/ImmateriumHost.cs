@@ -8,7 +8,6 @@ using Microsoft.Extensions.Logging;
 using Navigator.Builder;
 using Navigator.Client;
 using Navigator.Pipeline;
-using Navigator.Serialization;
 
 namespace Navigator.Core
 {

@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Navigator.Core;
 using Navigator.DataContracts;
-using Navigator.Serialization;
 
 namespace Navigator.Pipeline.Middleware
 {
@@ -44,8 +43,8 @@ namespace Navigator.Pipeline.Middleware
                 returnedObject = new ActionResult<Empty>();
             }
 
-            string bodyString = JsonSerializerWrapper.Serialize(returnedObject);
-            context.Response.Body = bodyString;
+            //string bodyString = JsonSerializerWrapper.Serialize(returnedObject);
+            context.Response.Body = returnedObject;
         }
 
         /// <summary>

@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using Navigator.Core;
 using Navigator.DataContracts;
 using Navigator.Exceptions;
-using Navigator.Serialization;
 
 namespace Navigator.Client
 {
@@ -108,7 +107,7 @@ namespace Navigator.Client
 
             ImmateriumMessage responseMessage = await _host.Send(message);
 
-            ActionResult<T> returnedObject = JsonSerializerWrapper.Deserialize<ActionResult<T>>(responseMessage.Body);
+            ActionResult<T> returnedObject = responseMessage.Body as ActionResult<T>;
 
             if (returnedObject.ResultCode == 0)
                 return returnedObject.Value;
@@ -147,7 +146,7 @@ namespace Navigator.Client
             try
             {
                 ImmateriumMessage responseMessage = await _host.Send(message);
-                var deserialized = JsonSerializerWrapper.Deserialize<ActionResult<T>>(responseMessage.Body);
+                var deserialized = responseMessage.Body as ActionResult<T>;
                 returnedObject = deserialized;
             }
             catch (TimeoutException e)
@@ -184,17 +183,14 @@ namespace Navigator.Client
                 Receiver = address.Service
             };
 
-            if (args == null)
-                args = new object[] { null };
+            args ??= new object[] { null };
 
             //Method = address.Method
             message.Headers.Add("Interface", address.Interface);
             message.Headers.Add("Method", address.Method);
             message.Headers.Add("Timeout", ((int)Timeout.TotalMilliseconds).ToString());
 
-            string serializedBody = JsonSerializerWrapper.Serialize(args);
-
-            message.Body = serializedBody;
+            message.Body = args;
 
             return message;
         }

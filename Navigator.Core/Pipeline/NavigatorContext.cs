@@ -6,11 +6,29 @@ using Navigator.Core;
 
 namespace Navigator.Pipeline
 {
+    public class NavigatorContextRequest
+    {
+        public ImmateriumMessage RawMessage { get; internal set; }
+        public ImmateriumHeaderCollection Headers => RawMessage.Headers;
+        public object Body => RawMessage.Body;
+    }
+
+    public class NavigatorContextResponse
+    {
+        public ImmateriumMessage RawMessage { get; set; }
+        public ImmateriumHeaderCollection Headers => RawMessage.Headers;
+        public object Body
+        {
+            get => RawMessage.Body;
+            set => RawMessage.Body = value;
+        }
+    }
+
     public class NavigatorContext
     {
-        public ImmateriumMessage Request { get; }
+        public NavigatorContextRequest Request { get; }
 
-        public ImmateriumMessage Response { get; }
+        public NavigatorContextResponse Response { get; }
 
         public IServiceProvider ServiceProvider { get; internal set; }
 
@@ -27,15 +45,17 @@ namespace Navigator.Pipeline
         internal object[] RequestParameters { get; set; }
         internal object ResponseObject { get; set; }
 
-        public NavigatorContext(ImmateriumMessage request)
+        public NavigatorContext(ImmateriumMessage rawMessage, object objectBody)
         {
-            Request = request;
-
-            if (request.Type == ImmateriumMessageType.StrictRequest)
+            Request = new NavigatorContextRequest()
             {
-                ResponseRequired = true;
-                Response = request.CreateResponse();
-            }
+                RawMessage = rawMessage
+            };
+
+            if (rawMessage.Type != ImmateriumMessageType.Request) return;
+
+            ResponseRequired = true;
+            Response = new NavigatorContextResponse { RawMessage = rawMessage.CreateReply() };
         }
 
     }

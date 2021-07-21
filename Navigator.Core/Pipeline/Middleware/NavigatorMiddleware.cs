@@ -27,7 +27,7 @@ namespace Navigator.Pipeline.Middleware
         /// <returns></returns>
         public async Task Handle(NavigatorContext context, Func<Task> next)
         {
-            ImmateriumMessage requestMessage = context.Request;
+            ImmateriumMessage requestMessage = context.Request.RawMessage;
 
             _logger.LogTrace("Navigator begin handle message");
 
@@ -35,7 +35,7 @@ namespace Navigator.Pipeline.Middleware
 
             object returnedObject = await InvokeControllerMethod(controllerAction, requestMessage, context);
 
-            if (requestMessage.Type == ImmateriumMessageType.StrictRequest)
+            if (requestMessage.Type == ImmateriumMessageType.Request)
             {
                 context.ResponseObject = returnedObject;
             }
@@ -97,11 +97,12 @@ namespace Navigator.Pipeline.Middleware
         {
             object controllerInstance = context.ServiceProvider.GetRequiredService(controllerType);
 
-            typeof(BaseNavigatorController).GetProperty("Logger")
+            /*typeof(BaseNavigatorController).GetProperty("Logger")
                 .SetValue(controllerInstance, context.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger(controllerType.Name));
 
             typeof(BaseNavigatorController).GetProperty("Context")
                 .SetValue(controllerInstance, context);
+            */
 
             return controllerInstance;
         }

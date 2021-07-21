@@ -68,7 +68,7 @@ namespace Navigator.Pipeline.Middleware
         /// <returns></returns>
         public async Task Handle(NavigatorContext context, Func<Task> next)
         {
-            var requestMessage = context.Request;
+            var requestMessage = context.Request.RawMessage;
 
             if (context.IsEvent) // handle events messages
             {
@@ -141,7 +141,7 @@ namespace Navigator.Pipeline.Middleware
         {
             IEnumerable<Type> controllers =
                 assembly.GetExportedTypes()
-                    .Where(t => typeof(BaseNavigatorController).IsAssignableFrom(t))
+                    //.Where(t => typeof(BaseNavigatorController).IsAssignableFrom(t))
                     .Where(t =>
                         t.GetCustomAttributes<NavigatorControllerAttribute>()
                         .Any(a => string.Equals(a.ServiceName, name, StringComparison.CurrentCultureIgnoreCase)));
@@ -204,7 +204,7 @@ namespace Navigator.Pipeline.Middleware
             // filter controllers
             IEnumerable<Type> controllers =
                 assembly.GetExportedTypes()
-                    .Where(t => typeof(BaseNavigatorController).IsAssignableFrom(t))
+                    //.Where(t => typeof(BaseNavigatorController).IsAssignableFrom(t))
                     .Where(t => t.GetCustomAttributes<NavigatorEventControllerAttribute>().Any());
 
 

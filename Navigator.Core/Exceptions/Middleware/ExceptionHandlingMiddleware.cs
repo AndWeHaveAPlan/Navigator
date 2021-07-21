@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using Navigator.Core;
 using Navigator.DataContracts;
 using Navigator.Pipeline;
-using Navigator.Serialization;
 
 namespace Navigator.Exceptions.Middleware
 {
@@ -29,12 +28,10 @@ namespace Navigator.Exceptions.Middleware
                     {
                         ResultCode = 9,
                         ErrorMessage =
-                            JsonSerializerWrapper.Serialize(e is TargetInvocationException ? e.InnerException : e)
+                            (e is TargetInvocationException ? e.InnerException : e)?.Message
                     };
 
-
-                    context.Response.Body = JsonSerializerWrapper.Serialize(response);
-
+                    context.Response.Body = response;
                 }
             }
         }
