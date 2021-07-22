@@ -45,7 +45,7 @@ namespace Navigator.Pipeline
         internal object[] RequestParameters { get; set; }
         internal object ResponseObject { get; set; }
 
-        public NavigatorContext(ImmateriumMessage rawMessage, object objectBody)
+        public NavigatorContext(ImmateriumMessage rawMessage)
         {
             Request = new NavigatorContextRequest()
             {

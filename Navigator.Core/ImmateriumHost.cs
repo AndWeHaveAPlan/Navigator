@@ -112,11 +112,7 @@ namespace Navigator.Core
         public void Initialize()
         {
             // TODO fix
-            _imClient = new ImmateruimClient(new LoggerFactory(), new ImmateriumConfig
-            {
-                ServiceTopic = Name,
-                AutoListen = false
-            });
+            _imClient = new ImmateruimClient();
 
             AppDomain.CurrentDomain.ProcessExit += (sender, e) =>
             {
@@ -125,19 +121,19 @@ namespace Navigator.Core
             };
 
             // handle common messages
-            _imClient.Received += (sender, e) =>
+            _imClient.OnMessage += (sender, e) =>
             {
                 if (ProcessingOrder == MessageProcessingOrder.Parallel)
                     Task.Factory.StartNew(async () =>
                     {
-                        await HandleMessage(e.ReceivedMessage);
+                        await HandleMessage(e.Message);
                     });
                 else
-                    HandleMessage(e.ReceivedMessage).Wait();
+                    HandleMessage(e.Message).Wait();
             };
 
             // handle events messages
-            _imClient.Event += (sender, e) =>
+            /*_imClient. += (sender, e) =>
             {
                 if (ProcessingOrder == MessageProcessingOrder.Parallel)
                     Task.Factory.StartNew(async () =>
@@ -146,7 +142,7 @@ namespace Navigator.Core
                     });
                 else
                     HandleEvent(e.ReceivedMessage).Wait();
-            };
+            };*/
         }
 
         /// <summary>
@@ -155,9 +151,6 @@ namespace Navigator.Core
         public void Start()
         {
             _tcs = new TaskCompletionSource<bool>();
-
-            if (HealthChecker != null)
-                HealthCheck();
 
             _imClient.Listen();
             Started?.Invoke(this, null);
@@ -184,8 +177,8 @@ namespace Navigator.Core
 
             if (context.ResponseRequired)
             {
-                _logger.LogTrace($"send response to: {context.Response.Receiver} with message: {context.Response.Body}");
-                await Send(context.Response);
+                _logger.LogTrace($"send response to: {context.Response.RawMessage.Receiver} with message: {context.Response.RawMessage.Body}");
+                await Send(context.Response.RawMessage);
             }
         }
 
@@ -236,7 +229,7 @@ namespace Navigator.Core
         /// <returns></returns>
         internal async Task<ImmateriumMessage> Send(ImmateriumMessage message)
         {
-            return await _imClient.Send(message);
+            return await _imClient.SendRaw(message);
         }
 
         /// <summary>
@@ -247,15 +240,15 @@ namespace Navigator.Core
         /// <returns></returns>
         internal async Task Publish(string method, object body)
         {
-            string bodyString = JsonSerializerWrapper.Serialize(new[] { body });
+            //string bodyString = JsonSerializerWrapper.Serialize(new[] { body });
             var message = new ImmateriumMessage
             {
                 Type = ImmateriumMessageType.Event,
-                Body = bodyString
+                Body = body
             };
             message.Headers["Method"] = method;
 
-            await _imClient.Publish(message);
+            _imClient.Publish(message);
         }
 
         /// <summary>
@@ -264,7 +257,7 @@ namespace Navigator.Core
         /// <param name="serviceName"></param>
         public void Subscribe(string serviceName)
         {
-            _imClient.Subscribe(serviceName);
+            _imClient.Subscribe(serviceName );
         }
 
         /// <summary>
