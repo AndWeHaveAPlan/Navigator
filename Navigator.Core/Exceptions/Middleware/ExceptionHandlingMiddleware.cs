@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Navigator.Core;
 using Navigator.DataContracts;
 using Navigator.Pipeline;

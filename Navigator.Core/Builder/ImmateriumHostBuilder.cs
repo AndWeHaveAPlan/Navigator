@@ -5,25 +5,37 @@ using Navigator.Core;
 //using Navigator.Exceptions.Middleware;
 using Navigator.Pipeline;
 using Navigator.Pipeline.Middleware;
-using System;
 using System.Reflection;
+using Immaterium;
 
 namespace Navigator.Builder
 {
+    public class ImmateriumHostBuilderOptions
+    {
+        public IImmateriumSerializer _immateriumSerializer;
+        public IImmateriumTransport _immateriumTransport;
+        public string Name;
+
+        public MessageProcessingOrder ProcessingOrder;
+    }
+
     public class ImmateriumHostBuilder
     {
         private IStartup _startup;
 
-        private Tuple<string, string> _userPass;
+        //private readonly ImmateriumHost _host;
 
-        private readonly ImmateriumHost _host;
+        private ImmateriumHostBuilderOptions _builderOptions = new ImmateriumHostBuilderOptions();
+
+        //private IImmateriumSerializer _immateriumSerializer;
+        //private IImmateriumTransport _immateriumTransport;
 
         /// <summary>
         /// 
         /// </summary>
         internal ImmateriumHostBuilder()
         {
-            _host = new ImmateriumHost();
+            //_host = new ImmateriumHost();
         }
 
         /// <summary>
@@ -40,14 +52,37 @@ namespace Navigator.Builder
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="name"></param>
-        public ImmateriumHostBuilder UseServiceName(string name)
+        /// <param name="immateriumTransport"></param>
+        /// <returns></returns>
+        public ImmateriumHostBuilder UseTransport(IImmateriumTransport immateriumTransport)
         {
-            _host.Name = name.ToLower();
-            _host.Initialize();
+            _builderOptions._immateriumTransport = immateriumTransport;
             return this;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="immateriumSerializer"></param>
+        /// <returns></returns>
+        public ImmateriumHostBuilder UseSerializer(IImmateriumSerializer immateriumSerializer)
+        {
+            _builderOptions._immateriumSerializer = immateriumSerializer;
+            return this;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        public ImmateriumHostBuilder UseServiceName(string name)
+        {
+            _builderOptions.Name = name.ToLower();
+            //_host.Initialize();
+            return this;
+        }
+
+        /*
         /// <summary>
         /// 
         /// </summary>
@@ -59,6 +94,7 @@ namespace Navigator.Builder
             _userPass = new Tuple<string, string>(username, password);
             return this;
         }
+        */
 
         /*
         /// <summary>
@@ -79,7 +115,7 @@ namespace Navigator.Builder
         /// <returns></returns>
         public ImmateriumHostBuilder UseOrder(MessageProcessingOrder order)
         {
-            _host.ProcessingOrder = order;
+            _builderOptions.ProcessingOrder = order;
             return this;
         }
 
@@ -89,24 +125,40 @@ namespace Navigator.Builder
         /// <returns></returns>
         public ImmateriumHost Build()
         {
-            // TODO fix
-            ILogger<ImmateriumHostBuilder> logger = null;// TbxLogger.TbxLogger.GetLogger("ImmateriumHostBuilder");
-
-            logger.LogInformation("creating host " + _host.Name);
-
-            logger.LogTrace("using startup");
             var serviceCollection = new ServiceCollection();
-
             _startup?.ConfigureServices(serviceCollection);
+
+            //serviceCollection.a
+            //ConsoleLogger
+
+            var container = serviceCollection.BuildServiceProvider();
+            var serviceScopeFactory = container.GetRequiredService<IServiceScopeFactory>();
+
+            using var serviceScope = serviceScopeFactory.CreateScope();
+
+            var host = new ImmateriumHost(
+                serviceScope.ServiceProvider.GetRequiredService<ILogger<ImmateriumHost>>(),
+                _builderOptions._immateriumSerializer,
+                _builderOptions._immateriumTransport)
+            {
+                Name = _builderOptions.Name,
+                ProcessingOrder = _builderOptions.ProcessingOrder
+            };
+
+
+            //logger.LogInformation("creating host " + host.Name);
+
             //serviceCollection.AddLogging(builder => { builder.AddProvider(new NavigatorLoggerProvider()); });
-            serviceCollection.AddTransient(services => _host.CreateClient());
-            serviceCollection.AddSingleton(new NavigatorClientFactory(_host));
+
+            //TODO client factory
+            serviceCollection.AddTransient(services => host.CreateClient());
+            serviceCollection.AddSingleton(new NavigatorClientFactory(host));
 
             var pipelineBuilder = new PipelineBuilder();
 
             //pipelineBuilder.Use(new ExceptionHandlingMiddleware());
             pipelineBuilder.Use(new SerializationMiddleware());
-            pipelineBuilder.Use(new MethodsCollectionMiddleware(_host.Name, Assembly.GetCallingAssembly(), serviceCollection));
+            pipelineBuilder.Use(new MethodsCollectionMiddleware(host.Name, Assembly.GetCallingAssembly(), serviceCollection));
             _startup?.Configure(pipelineBuilder);
             pipelineBuilder.Use(new DeserializationMiddleware());
             pipelineBuilder.Use(new NavigatorMiddleware());
@@ -114,21 +166,14 @@ namespace Navigator.Builder
             pipelineBuilder.Use(async (context, next) =>
             {
                 await next();
-
             });
 
-            if (_userPass != null)
-                _host.CreateClient(_userPass.Item1, _userPass.Item2).GetAwaiter().GetResult();
+            host.ServiceScopeFactory = serviceScopeFactory;
+            host.Pipeline = pipelineBuilder.Pipeline;
 
-            var container = serviceCollection.BuildServiceProvider();
-            var serviceScopeFactory = container.GetRequiredService<IServiceScopeFactory>();
+            //logger.LogInformation("Created host " + host.Name);
 
-            _host.ServiceScopeFactory = serviceScopeFactory;
-            _host.Pipeline = pipelineBuilder.Pipeline;
-
-            logger.LogInformation("Created host " + _host.Name);
-
-            return _host;
+            return host;
         }
     }
 }

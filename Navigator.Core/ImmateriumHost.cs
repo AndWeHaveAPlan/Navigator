@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
 using Immaterium;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,6 +31,8 @@ namespace Navigator.Core
         /// </summary>
         private ImmateruimClient _imClient;
         private readonly ILogger _logger;
+        private readonly IImmateriumSerializer _immateriumSerializer;
+        private readonly IImmateriumTransport _immateriumTransport;
         internal AppPipeline Pipeline;
 
         public event EventHandler Started;
@@ -43,10 +44,11 @@ namespace Navigator.Core
         /// <summary>
         /// 
         /// </summary>
-        internal ImmateriumHost()
+        internal ImmateriumHost(ILogger<ImmateriumHost> logger, IImmateriumSerializer immateriumSerializer, IImmateriumTransport immateriumTransport)
         {
-            // TODO fix
-            ILogger<ImmateriumHost> _logger = null;// TbxLogger.TbxLogger.GetLogger("ImmateriumHost");
+            _logger = logger;
+            _immateriumSerializer = immateriumSerializer;
+            _immateriumTransport = immateriumTransport;
             _httpListener = new HttpListener();
         }
 
@@ -112,7 +114,7 @@ namespace Navigator.Core
         public void Initialize()
         {
             // TODO fix
-            _imClient = new ImmateruimClient();
+            _imClient = new ImmateruimClient(Name, _immateriumSerializer, _immateriumTransport);
 
             AppDomain.CurrentDomain.ProcessExit += (sender, e) =>
             {
@@ -229,7 +231,7 @@ namespace Navigator.Core
         /// <returns></returns>
         internal async Task<ImmateriumMessage> Send(ImmateriumMessage message)
         {
-            return await _imClient.SendRaw(message);
+            return await _imClient.PostRaw(message);
         }
 
         /// <summary>
@@ -255,9 +257,12 @@ namespace Navigator.Core
         /// 
         /// </summary>
         /// <param name="serviceName"></param>
-        public void Subscribe(string serviceName)
+        /// <param name="durable"></param>
+        public void Subscribe(string serviceName, bool durable = true)
         {
-            _imClient.Subscribe(serviceName );
+            var subscriber = new Subscriber<ImmateriumMessage>();
+
+            _imClient.SubscribeRaw(serviceName, subscriber, durable);
         }
 
         /// <summary>
