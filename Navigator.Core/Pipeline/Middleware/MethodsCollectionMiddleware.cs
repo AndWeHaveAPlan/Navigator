@@ -42,6 +42,9 @@ namespace Navigator.Pipeline.Middleware
         /// <param name="serviceCollection"></param>
         public MethodsCollectionMiddleware(string serviceName, Assembly assemblyToCollect, IServiceCollection serviceCollection)
         {
+            _logger = serviceCollection.BuildServiceProvider()
+                .GetRequiredService<ILogger<MethodsCollectionMiddleware>>();
+
             CollectControllersMethods(serviceName, assemblyToCollect);
             CollectEventControllersMethods(assemblyToCollect);
 

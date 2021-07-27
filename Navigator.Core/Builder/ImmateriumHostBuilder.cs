@@ -12,8 +12,8 @@ namespace Navigator.Builder
 {
     public class ImmateriumHostBuilderOptions
     {
-        public IImmateriumSerializer _immateriumSerializer;
-        public IImmateriumTransport _immateriumTransport;
+        public IImmateriumSerializer ImmateriumSerializer;
+        public IImmateriumTransport ImmateriumTransport;
         public string Name;
 
         public MessageProcessingOrder ProcessingOrder;
@@ -25,7 +25,7 @@ namespace Navigator.Builder
 
         //private readonly ImmateriumHost _host;
 
-        private ImmateriumHostBuilderOptions _builderOptions = new ImmateriumHostBuilderOptions();
+        private readonly ImmateriumHostBuilderOptions _builderOptions = new ImmateriumHostBuilderOptions();
 
         //private IImmateriumSerializer _immateriumSerializer;
         //private IImmateriumTransport _immateriumTransport;
@@ -56,7 +56,7 @@ namespace Navigator.Builder
         /// <returns></returns>
         public ImmateriumHostBuilder UseTransport(IImmateriumTransport immateriumTransport)
         {
-            _builderOptions._immateriumTransport = immateriumTransport;
+            _builderOptions.ImmateriumTransport = immateriumTransport;
             return this;
         }
 
@@ -67,7 +67,7 @@ namespace Navigator.Builder
         /// <returns></returns>
         public ImmateriumHostBuilder UseSerializer(IImmateriumSerializer immateriumSerializer)
         {
-            _builderOptions._immateriumSerializer = immateriumSerializer;
+            _builderOptions.ImmateriumSerializer = immateriumSerializer;
             return this;
         }
 
@@ -128,6 +128,8 @@ namespace Navigator.Builder
             var serviceCollection = new ServiceCollection();
             _startup?.ConfigureServices(serviceCollection);
 
+            serviceCollection.AddLogging();
+
             //serviceCollection.a
             //ConsoleLogger
 
@@ -138,13 +140,14 @@ namespace Navigator.Builder
 
             var host = new ImmateriumHost(
                 serviceScope.ServiceProvider.GetRequiredService<ILogger<ImmateriumHost>>(),
-                _builderOptions._immateriumSerializer,
-                _builderOptions._immateriumTransport)
+                _builderOptions.ImmateriumSerializer,
+                _builderOptions.ImmateriumTransport)
             {
                 Name = _builderOptions.Name,
                 ProcessingOrder = _builderOptions.ProcessingOrder
             };
 
+            host.Initialize();
 
             //logger.LogInformation("creating host " + host.Name);
 
@@ -167,6 +170,9 @@ namespace Navigator.Builder
             {
                 await next();
             });
+
+            container = serviceCollection.BuildServiceProvider();
+            serviceScopeFactory = container.GetRequiredService<IServiceScopeFactory>();
 
             host.ServiceScopeFactory = serviceScopeFactory;
             host.Pipeline = pipelineBuilder.Pipeline;

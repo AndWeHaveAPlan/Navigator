@@ -231,7 +231,22 @@ namespace Navigator.Core
         /// <returns></returns>
         internal async Task<ImmateriumMessage> Send(ImmateriumMessage message)
         {
-            return await _imClient.PostRaw(message);
+            try
+            {
+
+                if (message.Headers.Type == ImmateriumMessageType.Request)
+                    return await _imClient.PostRaw(message);
+                else
+                {
+                    _imClient.SendRaw(message);
+                    return null;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         /// <summary>

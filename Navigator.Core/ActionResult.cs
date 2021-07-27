@@ -4,8 +4,12 @@ using System.ComponentModel.DataAnnotations;
 namespace Navigator.DataContracts
 {
     [Serializable]
-    public class ActionResult<TValue> : ActionResult where TValue : class
+    public class ActionResult<TValue> where TValue : class
     {
+        [Required]
+        public int ResultCode { get; set; }
+
+        public string ErrorMessage { get; set; }
 
         [Required]
         public new TValue Value { get; set; }
@@ -52,26 +56,8 @@ namespace Navigator.DataContracts
         }
     }
 
-    public class ActionResult
+    public class ActionResult : ActionResult<object>
     {
-        [Required]
-        public int ResultCode { get; set; }
-
-        [Required]
-        public object Value { get; set; }
-
-        public string ErrorMessage { get; set; }
-
-        public ActionResult(object value)
-        {
-            Value = value;
-        }
-
-        public ActionResult()
-        {
-            Value = null;
-        }
-
         /// <summary>
         /// 
         /// </summary>

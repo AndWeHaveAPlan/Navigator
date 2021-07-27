@@ -29,7 +29,7 @@ namespace Navigator.Pipeline.Middleware
         {
             ImmateriumMessage requestMessage = context.Request.RawMessage;
 
-            _logger.LogTrace("Navigator begin handle message");
+            _logger?.LogTrace("Navigator begin handle message");
 
             ControllerAction controllerAction = context.ControllerAction;
 
@@ -95,16 +95,25 @@ namespace Navigator.Pipeline.Middleware
         /// <returns></returns>
         private object CreateController(Type controllerType, ImmateriumMessage immateriumMessage, NavigatorContext context)
         {
-            object controllerInstance = context.ServiceProvider.GetRequiredService(controllerType);
+            try
+            {
 
-            /*typeof(BaseNavigatorController).GetProperty("Logger")
-                .SetValue(controllerInstance, context.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger(controllerType.Name));
+                object controllerInstance = context.ServiceProvider.GetRequiredService(controllerType);
 
-            typeof(BaseNavigatorController).GetProperty("Context")
-                .SetValue(controllerInstance, context);
-            */
+                /*typeof(BaseNavigatorController).GetProperty("Logger")
+                    .SetValue(controllerInstance, context.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger(controllerType.Name));
 
-            return controllerInstance;
+                typeof(BaseNavigatorController).GetProperty("Context")
+                    .SetValue(controllerInstance, context);
+                */
+
+                return controllerInstance;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
     }
 }

@@ -6,6 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Immaterium.Serialization.Bson" Version="0.2.0" />
+    <PackageReference Include="Immaterium.Serialization.Json" Version="0.2.0" />
+    <PackageReference Include="Immaterium.Transports.RabbitMQ" Version="0.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Navigator.Core\Navigator.Core.csproj" />
   </ItemGroup>
 
