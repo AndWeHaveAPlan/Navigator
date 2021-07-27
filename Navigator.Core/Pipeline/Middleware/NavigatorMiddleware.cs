@@ -4,10 +4,9 @@ using System.Threading.Tasks;
 using Immaterium;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Navigator.Core;
-using Navigator.Exceptions;
+using Navigator.Core.Exceptions;
 
-namespace Navigator.Pipeline.Middleware
+namespace Navigator.Core.Pipeline.Middleware
 {
     /// <summary>
     /// 

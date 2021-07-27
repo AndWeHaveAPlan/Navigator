@@ -1,14 +1,12 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Navigator.Client;
-using Navigator.Core;
-//using Navigator.Exceptions.Middleware;
-using Navigator.Pipeline;
-using Navigator.Pipeline.Middleware;
-using System.Reflection;
+﻿using System.Reflection;
 using Immaterium;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Navigator.Core.Client;
+using Navigator.Core.Pipeline;
+using Navigator.Core.Pipeline.Middleware; //using Navigator.Exceptions.Middleware;
 
-namespace Navigator.Builder
+namespace Navigator.Core.Builder
 {
     public class ImmateriumHostBuilderOptions
     {

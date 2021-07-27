@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using Immaterium;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Navigator.Builder;
-using Navigator.Client;
-using Navigator.Pipeline;
+using Navigator.Core.Builder;
+using Navigator.Core.Client;
+using Navigator.Core.Pipeline;
 
 namespace Navigator.Core
 {

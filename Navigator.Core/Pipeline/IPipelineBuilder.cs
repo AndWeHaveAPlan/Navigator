@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Navigator.Pipeline
+namespace Navigator.Core.Pipeline
 {
     public interface IPipelineBuilder
     {

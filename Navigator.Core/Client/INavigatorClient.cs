@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Navigator.Core;
-using Navigator.DataContracts;
 
-namespace Navigator.Client
+namespace Navigator.Core.Client
 {
     public interface INavigatorClient
     {

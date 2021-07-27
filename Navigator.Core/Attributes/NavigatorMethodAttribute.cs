@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Navigator.Attributes
+namespace Navigator.Core.Attributes
 {
     [AttributeUsage(AttributeTargets.Method, Inherited = false)]
     public class NavigatorMethodAttribute : Attribute

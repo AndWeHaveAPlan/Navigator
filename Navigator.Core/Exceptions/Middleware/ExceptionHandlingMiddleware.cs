@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Reflection;
 using System.Threading.Tasks;
-using Navigator.Core;
-using Navigator.DataContracts;
-using Navigator.Pipeline;
+using Navigator.Core.Pipeline;
 
-namespace Navigator.Exceptions.Middleware
+namespace Navigator.Core.Exceptions.Middleware
 {
     public class ExceptionHandlingMiddleware : IMiddleware
     {

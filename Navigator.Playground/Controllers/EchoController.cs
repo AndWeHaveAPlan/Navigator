@@ -5,8 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Navigator.Attributes;
-using Navigator.Client;
+using Navigator.Core.Attributes;
+using Navigator.Core.Client;
 using Navigator.Playground.Models;
 
 namespace Navigator.Playground.Controllers

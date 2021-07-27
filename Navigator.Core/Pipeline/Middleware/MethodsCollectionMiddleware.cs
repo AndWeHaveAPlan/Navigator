@@ -5,11 +5,10 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Navigator.Attributes;
-using Navigator.Core;
-using Navigator.Exceptions;
+using Navigator.Core.Attributes;
+using Navigator.Core.Exceptions;
 
-namespace Navigator.Pipeline.Middleware
+namespace Navigator.Core.Pipeline.Middleware
 {
     internal class MethodsCollectionMiddleware : IMiddleware
     {

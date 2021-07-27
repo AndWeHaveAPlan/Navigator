@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Navigator.Attributes
+namespace Navigator.Core.Attributes
 {
     [AttributeUsage(AttributeTargets.Class, Inherited = false)]
     public class NavigatorControllerAttribute : Attribute

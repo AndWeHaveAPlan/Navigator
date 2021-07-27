@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Navigator.Exceptions
+namespace Navigator.Core.Exceptions
 {
     [Serializable]
     public class ApiMethodNotFoundException : NavigatorException

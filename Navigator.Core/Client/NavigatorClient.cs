@@ -2,11 +2,9 @@
 using System.Threading.Tasks;
 using Immaterium;
 using Microsoft.Extensions.Logging;
-using Navigator.Core;
-using Navigator.DataContracts;
-using Navigator.Exceptions;
+using Navigator.Core.Exceptions;
 
-namespace Navigator.Client
+namespace Navigator.Core.Client
 {
     /// <summary>
     /// 

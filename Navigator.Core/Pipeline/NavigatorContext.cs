@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 using Immaterium;
-using Navigator.Core;
 
-namespace Navigator.Pipeline
+namespace Navigator.Core.Pipeline
 {
     public class NavigatorContextRequest
     {

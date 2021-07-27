@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Navigator.Core;
-using Navigator.DataContracts;
 
-namespace Navigator.Pipeline.Middleware
+namespace Navigator.Core.Pipeline.Middleware
 {
     /// <summary>
     /// 

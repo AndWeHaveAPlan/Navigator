@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Navigator.DataContracts
+namespace Navigator.Core
 {
     [Serializable]
     public class ActionResult<TValue> where TValue : class

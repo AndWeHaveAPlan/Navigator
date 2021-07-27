@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Navigator.Pipeline;
+using Navigator.Core.Pipeline;
 
-namespace Navigator.Builder
+namespace Navigator.Core.Builder
 {
     public interface IStartup
     {

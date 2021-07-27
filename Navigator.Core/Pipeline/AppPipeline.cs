@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Navigator.Pipeline
+namespace Navigator.Core.Pipeline
 {
     public class AppPipeline
     {

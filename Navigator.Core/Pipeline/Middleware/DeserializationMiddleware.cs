@@ -3,10 +3,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Navigator.Core;
-using Navigator.Exceptions;
+using Navigator.Core.Exceptions;
 
-namespace Navigator.Pipeline.Middleware
+namespace Navigator.Core.Pipeline.Middleware
 {
     /// <summary>
     /// 

@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Navigator.Core;
 
-namespace Navigator.Client
+namespace Navigator.Core.Client
 {
     public class NavigatorClientFactory
     {
