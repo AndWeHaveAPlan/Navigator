@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Immaterium;
 using Microsoft.Extensions.Logging;
 using Navigator.Core.Exceptions;
+using Navigator.Core.Pipeline.Middleware;
 
 namespace Navigator.Core.Client
 {
@@ -24,6 +27,7 @@ namespace Navigator.Core.Client
     {
         private readonly ImmateriumHost _host;
         private readonly ILogger _logger;
+        private readonly IEnumerable<INavigatorSerializer> _navigatorSerializers;
 
         /// <summary>
         /// 
@@ -44,10 +48,11 @@ namespace Navigator.Core.Client
         /// 
         /// </summary>
         /// <param name="host"></param>
-        public NavigatorClient(ImmateriumHost host, ILogger<NavigatorClient> logger)
+        public NavigatorClient(ImmateriumHost host, ILogger<NavigatorClient> logger, IEnumerable<INavigatorSerializer> navigatorSerializers)
         {
             _host = host;
             _logger = logger;
+            _navigatorSerializers = navigatorSerializers;
             Type = NavigatorClientType.Anonymous;
             Timeout = TimeSpan.FromMinutes(1);
         }
@@ -72,9 +77,9 @@ namespace Navigator.Core.Client
         /// <returns></returns>
         public async Task Send(NavigatorAddress address, params object[] args)
         {
-            ImmateriumMessage message = BuildMessage(address, args);
-            message.Type = ImmateriumMessageType.Common;
-            await _host.Send(message);
+            var headers = BuildMessageHeaders(address);
+            headers.Type = ImmateriumMessageType.Common;
+            await _host.Send(headers, args);
         }
 
         /// <summary>
@@ -100,12 +105,16 @@ namespace Navigator.Core.Client
         public async Task<T> Post<T>(NavigatorAddress address, params object[] args) where T : class
         {
 
-            ImmateriumMessage message = BuildMessage(address, args);
-            message.Type = ImmateriumMessageType.Request;
+            var headers = BuildMessageHeaders(address);
+            headers.Type = ImmateriumMessageType.Request;
 
-            ImmateriumMessage responseMessage = await _host.Send(message);
+            ImmateriumMessage responseMessage = await _host.Send(headers, args);
 
-            ActionResult<T> returnedObject = responseMessage.Body as ActionResult<T>;
+            var models = _navigatorSerializers.First().ProcessBody(responseMessage.Body);
+
+            var ret = models.First().GetObject(typeof(ActionResult<T>));
+
+            ActionResult<T> returnedObject = ret as ActionResult<T>;
 
             if (returnedObject.ResultCode == 0)
                 return returnedObject.Value;
@@ -136,14 +145,14 @@ namespace Navigator.Core.Client
         /// <returns></returns>
         public async Task<ActionResult<T>> TryPost<T>(NavigatorAddress address, params object[] args) where T : class
         {
-            ImmateriumMessage message = BuildMessage(address, args);
-            message.Type = ImmateriumMessageType.Request;
+            var headers = BuildMessageHeaders(address);
+            headers.Type = ImmateriumMessageType.Request;
 
             ActionResult<T> returnedObject;
 
             try
             {
-                ImmateriumMessage responseMessage = await _host.Send(message);
+                ImmateriumMessage responseMessage = await _host.Send(headers, args);
                 var deserialized = responseMessage.Body as ActionResult<T>;
                 returnedObject = deserialized;
             }
@@ -165,7 +174,7 @@ namespace Navigator.Core.Client
         /// <param name="method"></param>
         /// <param name="body"></param>
         /// <returns></returns>
-        public async Task Publish(string method, object body)
+        public async Task Publish(string method, params object[] body)
         {
             await _host.Publish(method, body);
         }
@@ -174,23 +183,17 @@ namespace Navigator.Core.Client
         /// 
         /// </summary>
         /// <returns></returns>
-        private ImmateriumMessage BuildMessage(NavigatorAddress address, object[] args)
+        private ImmateriumHeaderCollection BuildMessageHeaders(NavigatorAddress address)
         {
-            ImmateriumMessage message = new ImmateriumMessage
+            var headers = new ImmateriumHeaderCollection()
             {
                 Receiver = address.Service
             };
 
-            args ??= new object[] { null };
+            headers.Add("Interface", address.Interface);
+            headers.Add("Method", address.Method);
 
-            //Method = address.Method
-            message.Headers.Add("Interface", address.Interface);
-            message.Headers.Add("Method", address.Method);
-            message.Headers.Add("Timeout", ((int)Timeout.TotalMilliseconds).ToString());
-
-            message.Body = args;
-
-            return message;
+            return headers;
         }
     }
 }

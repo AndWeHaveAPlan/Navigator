@@ -47,20 +47,24 @@ namespace Navigator.Core.Pipeline.Middleware
             if (controllerAction.HasParamsArg)
                 requiredParamsLength -= 1;
 
-            object[] jArray = immateriumMessage.Body as object[];
+            //object[] jArray = immateriumMessage.Body as object[];
 
-            if (jArray == null)
+            INavigatorSerializer navigatorSerializer = new JsonNavigatorSerializer();
+
+            var requestModel = navigatorSerializer.ProcessBody(immateriumMessage.Body);
+
+            if (requestModel == null)
             {
                 throw new NavigatorException("Invalid request arguments format");
             }
 
-            if (jArray.Length < requiredParamsLength)
+            if (requestModel.Count() < requiredParamsLength)
             {
                 // TODO: create exception class
                 throw new NavigatorException("Not enough arguments");
             }
 
-            if (!controllerAction.HasParamsArg && jArray.Length > totalParamsLength)
+            if (!controllerAction.HasParamsArg && requestModel.Count() > totalParamsLength)
             {
                 // TODO: create exception class
                 throw new NavigatorException("Too few arguments");
@@ -69,14 +73,15 @@ namespace Navigator.Core.Pipeline.Middleware
             object[] invokeParams = new object[methodParameters.Length];
 
             int i = 0;
-            for (; i < jArray.Length; i++)
+            for (; i < requestModel.Count(); i++)
             {
                 if (methodParameters[i].GetCustomAttributes<ParamArrayAttribute>().Any())
                     break;
 
                 try
                 {
-                    invokeParams[i] = Validate(methodParameters[i].ParameterType, jArray[i]);
+
+                    invokeParams[i] = Validate(methodParameters[i].ParameterType, requestModel[i]);
                 }
                 catch (Exception e)
                 {
@@ -89,7 +94,7 @@ namespace Navigator.Core.Pipeline.Middleware
                 var paramsType = methodParameters[i].ParameterType.GetElementType();
                 var paramsTypeArray = paramsType.MakeArrayType();
 
-                var remainingArgs = jArray.Skip(i).ToList();
+                var remainingArgs = requestModel.Skip(i).ToList();
                 Array paramsArgument = (Array)Activator.CreateInstance(paramsTypeArray, remainingArgs.Count);
 
                 for (int index = 0; index < remainingArgs.Count; index++)
@@ -116,9 +121,10 @@ namespace Navigator.Core.Pipeline.Middleware
         /// <param name="targetType"></param>
         /// <param name="obj"></param>
         /// <returns></returns>
-        private object Validate(Type targetType, object obj)
+        private object Validate(Type targetType, IRequestBodyModel obj)
         {
-            var resObject = Convert.ChangeType(obj, targetType);
+            //var resObject = Convert.ChangeType(obj, targetType);
+            var resObject = obj.GetObject(targetType);
             //var r =obj as (targetType. )
             if (resObject == null && targetType.IsClass)
                 return null;

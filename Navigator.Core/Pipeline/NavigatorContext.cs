@@ -9,14 +9,14 @@ namespace Navigator.Core.Pipeline
     {
         public ImmateriumMessage RawMessage { get; internal set; }
         public ImmateriumHeaderCollection Headers => RawMessage.Headers;
-        public object Body => RawMessage.Body;
+        public byte[] Body => RawMessage.Body;
     }
 
     public class NavigatorContextResponse
     {
         public ImmateriumMessage RawMessage { get; set; }
         public ImmateriumHeaderCollection Headers => RawMessage.Headers;
-        public object Body
+        public byte[] Body
         {
             get => RawMessage.Body;
             set => RawMessage.Body = value;

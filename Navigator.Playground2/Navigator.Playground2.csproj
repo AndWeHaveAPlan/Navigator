@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
@@ -11,6 +11,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Navigator.Core\Navigator.Core.csproj" />
+		<ProjectReference Include="..\Navigator.Playground\Navigator.Playground.csproj" />
 	</ItemGroup>
 
 </Project>

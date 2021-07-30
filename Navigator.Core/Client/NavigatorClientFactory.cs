@@ -26,26 +26,5 @@ namespace Navigator.Core.Client
         {
             return _host.CreateClient();
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="jwtToken"></param>
-        /// <returns></returns>
-        public NavigatorClient CreateClient(string jwtToken)
-        {
-            return _host.CreateClient(jwtToken);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="username"></param>
-        /// <param name="password"></param>
-        /// <returns></returns>
-        public async Task<NavigatorClient> CreateClient(string username, string password)
-        {
-            return await _host.CreateClient(username, password);
-        }
     }
 }

@@ -73,6 +73,6 @@ namespace Navigator.Core.Client
         /// <param name="method"></param>
         /// <param name="body"></param>
         /// <returns></returns>
-        Task Publish(string method, object body);
+        Task Publish(string method, params object[] body);
     }
 }

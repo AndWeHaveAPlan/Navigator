@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Immaterium;
@@ -7,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Navigator.Core.Builder;
 using Navigator.Core.Client;
 using Navigator.Core.Pipeline;
+using Navigator.Core.Pipeline.Middleware;
 
 namespace Navigator.Core
 {
@@ -31,7 +33,6 @@ namespace Navigator.Core
         /// </summary>
         private ImmateruimClient _imClient;
         private readonly ILogger _logger;
-        private readonly IImmateriumSerializer _immateriumSerializer;
         private readonly IImmateriumTransport _immateriumTransport;
         internal AppPipeline Pipeline;
 
@@ -44,60 +45,16 @@ namespace Navigator.Core
         /// <summary>
         /// 
         /// </summary>
-        internal ImmateriumHost(ILogger<ImmateriumHost> logger, IImmateriumSerializer immateriumSerializer, IImmateriumTransport immateriumTransport)
+        internal ImmateriumHost(ILogger<ImmateriumHost> logger, IImmateriumTransport immateriumTransport)
         {
             _logger = logger;
-            _immateriumSerializer = immateriumSerializer;
             _immateriumTransport = immateriumTransport;
             _httpListener = new HttpListener();
         }
 
         public IServiceScopeFactory ServiceScopeFactory;
+        public ServiceProvider ServiceProvider;
         private readonly HttpListener _httpListener;
-
-        /*
-        /// <summary>
-        /// 
-        /// </summary>
-        private void HealthCheck()
-        {
-            _httpListener.Prefixes.Add("http://+:4001/");
-            _httpListener.Start();
-            _logger.LogInformation("Listening health check on 4001");
-
-            var cts = new CancellationTokenSource();
-
-            Task.Factory.StartNew(async () =>
-            {
-                while (!cts.Token.IsCancellationRequested)
-                {
-                    // from https://docs.microsoft.com/en-us/dotnet/api/system.net.httplistener?view=netframework-4.7.2
-
-                    HttpListenerContext context = await _httpListener.GetContextAsync();
-                    HttpListenerResponse response = context.Response;
-                    response.ContentLength64 = 0;
-
-                    if (HealthChecker != null)
-                    {
-                        try
-                        {
-                            response.StatusCode = HealthChecker.HealthCheck() ? 200 : 500;
-                        }
-                        catch (Exception)
-                        {
-                            response.StatusCode = 500;
-                        }
-                    }
-                    else
-                    {
-                        response.StatusCode = 418;
-                    }
-
-                    response.Close();
-                }
-            }, cts.Token);
-        }
-        */
 
         /// <summary>
         /// 
@@ -114,7 +71,7 @@ namespace Navigator.Core
         public void Initialize()
         {
             // TODO fix
-            _imClient = new ImmateruimClient(Name, _immateriumSerializer, _immateriumTransport);
+            _imClient = new ImmateruimClient(Name, _immateriumTransport);
 
             AppDomain.CurrentDomain.ProcessExit += (sender, e) =>
             {
@@ -244,6 +201,31 @@ namespace Navigator.Core
             }
             catch (Exception e)
             {
+                //TODO: remove console
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        internal async Task<ImmateriumMessage> Send(ImmateriumHeaderCollection headers, object body)
+        {
+            try
+            {
+                var serializer = ServiceProvider.GetServices<INavigatorSerializer>().First();
+                var message = new ImmateriumMessage(headers);
+                message.Body = serializer.CreateBody(body);
+
+                if (headers.Type == ImmateriumMessageType.Request)
+                    return await _imClient.PostRaw(message);
+                else
+                {
+                    _imClient.SendRaw(message);
+                    return null;
+                }
+            }
+            catch (Exception e)
+            {
+                //TODO: remove console
                 Console.WriteLine(e);
                 throw;
             }
@@ -255,17 +237,21 @@ namespace Navigator.Core
         /// <param name="method"></param>
         /// <param name="body"></param>
         /// <returns></returns>
-        internal async Task Publish(string method, object body)
+        internal async Task Publish(string method, params object[] body)
         {
+            var serializer = ServiceProvider.GetServices<INavigatorSerializer>().First();
+
+            var bytes = serializer.CreateBody(body);
+
             //string bodyString = JsonSerializerWrapper.Serialize(new[] { body });
             var message = new ImmateriumMessage
             {
                 Type = ImmateriumMessageType.Event,
-                Body = body
+                Body = bytes
             };
             message.Headers["Method"] = method;
 
-            _imClient.Publish(message);
+            _imClient.Publish(bytes);
         }
 
         /// <summary>
@@ -275,32 +261,12 @@ namespace Navigator.Core
         /// <param name="durable"></param>
         public void Subscribe(string serviceName, bool durable = true)
         {
-            var subscriber = new Subscriber<ImmateriumMessage>();
+            var subscriber = new Subscriber(message =>
+            {
+                //TODO: logic
+            });
 
             _imClient.SubscribeRaw(serviceName, subscriber, durable);
-        }
-
-        /// <summary>
-        /// Creates NavigatorClient authorized as given user
-        /// </summary>
-        /// <returns></returns>
-        public async Task<NavigatorClient> CreateClient(string username, string password)
-        {
-            // TODO: fix
-            var client = new NavigatorClient(this, null);
-
-            return client;
-        }
-
-        /// <summary>
-        /// Creates forwarding NavigatorClient
-        /// </summary>
-        /// <returns></returns>
-        public NavigatorClient CreateClient(string jwtToken)
-        {
-            // TODO: fix
-            var client = new NavigatorClient(this, null);
-            return client;
         }
 
         /// <summary>
@@ -309,8 +275,7 @@ namespace Navigator.Core
         /// <returns></returns>
         public NavigatorClient CreateClient()
         {
-            // TODO: fix
-            return new NavigatorClient(this, null);
+            return new NavigatorClient(this, null, ServiceProvider.GetServices<INavigatorSerializer>());
         }
 
         /// <summary>

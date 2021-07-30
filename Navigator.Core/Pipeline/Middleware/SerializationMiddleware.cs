@@ -42,7 +42,9 @@ namespace Navigator.Core.Pipeline.Middleware
             }
 
             //string bodyString = JsonSerializerWrapper.Serialize(returnedObject);
-            context.Response.Body = returnedObject;
+            INavigatorSerializer navigatorSerializer = new JsonNavigatorSerializer();
+
+            context.Response.Body = navigatorSerializer.CreateBody(new object[] { returnedObject });
         }
 
         /// <summary>

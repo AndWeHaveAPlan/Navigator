@@ -10,7 +10,6 @@ namespace Navigator.Core.Builder
 {
     public class ImmateriumHostBuilderOptions
     {
-        public IImmateriumSerializer ImmateriumSerializer;
         public IImmateriumTransport ImmateriumTransport;
         public string Name;
 
@@ -55,17 +54,6 @@ namespace Navigator.Core.Builder
         public ImmateriumHostBuilder UseTransport(IImmateriumTransport immateriumTransport)
         {
             _builderOptions.ImmateriumTransport = immateriumTransport;
-            return this;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="immateriumSerializer"></param>
-        /// <returns></returns>
-        public ImmateriumHostBuilder UseSerializer(IImmateriumSerializer immateriumSerializer)
-        {
-            _builderOptions.ImmateriumSerializer = immateriumSerializer;
             return this;
         }
 
@@ -124,6 +112,7 @@ namespace Navigator.Core.Builder
         public ImmateriumHost Build()
         {
             var serviceCollection = new ServiceCollection();
+            serviceCollection.AddSingleton<INavigatorSerializer>(new JsonNavigatorSerializer());
             _startup?.ConfigureServices(serviceCollection);
 
             serviceCollection.AddLogging();
@@ -138,7 +127,6 @@ namespace Navigator.Core.Builder
 
             var host = new ImmateriumHost(
                 serviceScope.ServiceProvider.GetRequiredService<ILogger<ImmateriumHost>>(),
-                _builderOptions.ImmateriumSerializer,
                 _builderOptions.ImmateriumTransport)
             {
                 Name = _builderOptions.Name,
@@ -172,6 +160,7 @@ namespace Navigator.Core.Builder
             container = serviceCollection.BuildServiceProvider();
             serviceScopeFactory = container.GetRequiredService<IServiceScopeFactory>();
 
+            host.ServiceProvider = container;
             host.ServiceScopeFactory = serviceScopeFactory;
             host.Pipeline = pipelineBuilder.Pipeline;
 

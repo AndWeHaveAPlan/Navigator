@@ -4,7 +4,7 @@ using Navigator.Core;
 using Navigator.Playground.Models;
 using RabbitMQ.Client;
 
-namespace Navigator.Playground
+namespace Navigator.Playground2
 {
     class Program
     {
@@ -16,23 +16,32 @@ namespace Navigator.Playground
             var host =
                 ImmateriumHost.CreateDefaultBuilder()
                     .UseTransport(new RabbitMqTransport(connection))
-                    .UseServiceName("crow")
+                    .UseServiceName("crow2")
                     .UseOrder(MessageProcessingOrder.Parallel)
                     .Build();
 
 
             Console.WriteLine("Hello World!");
 
-            var client = host.CreateClient();
+
+
+
+
+
+
+
+
+
+
+
 
             host.Start();
 
-            
-            var result = client.Post<SimpleClass>(new NavigatorAddress("crow", "echo", "Object"), 1, "ttt").Result;
+            var client = host.CreateClient();
+            var result = client.Post<SimpleClass>(new NavigatorAddress("crow", "echo", "Object"), 1, "ttt", new SimpleClass { S1 = "sdfs", I1 = 55 }).Result;
 
 
             Console.WriteLine("Hello World!");
-            
         }
     }
 }

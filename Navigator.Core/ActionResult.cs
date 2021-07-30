@@ -12,7 +12,7 @@ namespace Navigator.Core
         public string ErrorMessage { get; set; }
 
         [Required]
-        public new TValue Value { get; set; }
+        public TValue Value { get; set; }
 
         public ActionResult(TValue value)
         {

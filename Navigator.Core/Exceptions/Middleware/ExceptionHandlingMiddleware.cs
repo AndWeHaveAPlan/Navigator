@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Threading.Tasks;
 using Navigator.Core.Pipeline;
+using Navigator.Core.Pipeline.Middleware;
 
 namespace Navigator.Core.Exceptions.Middleware
 {
@@ -28,7 +29,9 @@ namespace Navigator.Core.Exceptions.Middleware
                             (e is TargetInvocationException ? e.InnerException : e)?.Message
                     };
 
-                    context.Response.Body = response;
+
+                    INavigatorSerializer navigatorSerializer = new JsonNavigatorSerializer();
+                    context.Response.Body = navigatorSerializer.CreateBody(response);
                 }
             }
         }
