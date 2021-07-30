@@ -62,12 +62,25 @@ namespace Navigator.Core
         /// 
         /// </summary>
         /// <returns></returns>
-        public static ActionResult Unauthorized()
+        public static ActionResult NotFound()
         {
             return new ActionResult
             {
-                ErrorMessage = "Unauthorized",
-                ResultCode = 8
+                ErrorMessage = "Not found",
+                ResultCode = 404
+            };
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public static ActionResult BadRequest()
+        {
+            return new ActionResult
+            {
+                ErrorMessage = "Bad request",
+                ResultCode = 400
             };
         }
     }

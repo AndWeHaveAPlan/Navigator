@@ -24,7 +24,7 @@ namespace Navigator.Core.Exceptions.Middleware
 
                     var response = new ActionResult
                     {
-                        ResultCode = 9,
+                        ResultCode = 500,
                         ErrorMessage =
                             (e is TargetInvocationException ? e.InnerException : e)?.Message
                     };

@@ -25,14 +25,14 @@ namespace Navigator.Playground
 
             var client = host.CreateClient();
 
-            host.Start();
+            host.Run();
 
-            
+
             var result = client.Post<SimpleClass>(new NavigatorAddress("crow", "echo", "Object"), 1, "ttt").Result;
 
 
             Console.WriteLine("Hello World!");
-            
+
         }
     }
 }

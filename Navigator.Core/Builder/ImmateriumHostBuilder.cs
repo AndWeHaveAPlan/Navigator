@@ -3,6 +3,7 @@ using Immaterium;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Navigator.Core.Client;
+using Navigator.Core.Exceptions.Middleware;
 using Navigator.Core.Pipeline;
 using Navigator.Core.Pipeline.Middleware; //using Navigator.Exceptions.Middleware;
 
@@ -145,7 +146,7 @@ namespace Navigator.Core.Builder
 
             var pipelineBuilder = new PipelineBuilder();
 
-            //pipelineBuilder.Use(new ExceptionHandlingMiddleware());
+            pipelineBuilder.Use(new ExceptionHandlingMiddleware());
             pipelineBuilder.Use(new SerializationMiddleware());
             pipelineBuilder.Use(new MethodsCollectionMiddleware(host.Name, Assembly.GetCallingAssembly(), serviceCollection));
             _startup?.Configure(pipelineBuilder);
