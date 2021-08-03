@@ -144,9 +144,7 @@ namespace Navigator.Core.Pipeline.Middleware
             IEnumerable<Type> controllers =
                 assembly.GetExportedTypes()
                     //.Where(t => typeof(BaseNavigatorController).IsAssignableFrom(t))
-                    .Where(t =>
-                        t.GetCustomAttributes<NavigatorControllerAttribute>()
-                        .Any(a => string.Equals(a.ServiceName, name, StringComparison.CurrentCultureIgnoreCase)));
+                    .Where(t => t.GetCustomAttributes<NavigatorControllerAttribute>().Any());
 
 
             foreach (Type controllerType in controllers)

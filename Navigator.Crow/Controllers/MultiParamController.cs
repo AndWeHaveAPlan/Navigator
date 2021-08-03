@@ -6,7 +6,7 @@ using Navigator.Crow.DataTypes;
 
 namespace Navigator.Crow.Controllers
 {
-    [NavigatorController("crow")]
+    [NavigatorController()]
     public class MultiParamController
     {
         [NavigatorMethod]

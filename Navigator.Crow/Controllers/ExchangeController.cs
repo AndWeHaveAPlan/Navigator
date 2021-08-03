@@ -6,7 +6,7 @@ using Navigator.Crow.Services;
 
 namespace Navigator.Crow.Controllers
 {
-    [NavigatorController("Crow")]
+    [NavigatorController()]
     public class ExchangeController
     {
         private readonly StorageService _storageService;

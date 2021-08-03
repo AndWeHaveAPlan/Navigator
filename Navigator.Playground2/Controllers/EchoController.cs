@@ -6,7 +6,7 @@ using Navigator.Playground.Models;
 
 namespace Navigator.Playground2.Controllers
 {
-    [NavigatorController("crow2", Interface = "echo")]
+    [NavigatorController(Interface = "echo")]
     public class EchoController
     {
         private readonly ILogger<EchoController> _logger;

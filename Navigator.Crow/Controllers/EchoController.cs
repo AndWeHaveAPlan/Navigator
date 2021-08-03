@@ -5,7 +5,7 @@ using Navigator.Core.Attributes;
 
 namespace Navigator.Crow.Controllers
 {
-    [NavigatorController("crow", Interface = "echo")]
+    [NavigatorController(Interface = "echo")]
     public class EchoController
     {
         private readonly ILogger<EchoController> _logger;

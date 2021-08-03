@@ -3,15 +3,14 @@ using Navigator.Core.Client;
 
 namespace Navigator.Crow.Controllers
 {
-    [NavigatorController("crow")]
-    public class EventManagerController 
+    [NavigatorController()]
+    public class EventManagerController
     {
-        private readonly NavigatorClientFactory _clientFactory;
+        private readonly NavigatorClient _client;
 
-        public EventManagerController(NavigatorClientFactory clientFactory)
+        public EventManagerController(NavigatorClient client)
         {
-            _clientFactory = clientFactory;
-            var client = _clientFactory.CreateClient();
+            _client = client;
         }
 
         /// <summary>
@@ -21,7 +20,7 @@ namespace Navigator.Crow.Controllers
         [NavigatorMethod]
         public string Fire()
         {
-            _clientFactory.CreateClient().Publish("ACK", "pickle-pee").Wait();
+            _client.Publish("ACK", "pickle-pee").Wait();
             return "";
         }
     }

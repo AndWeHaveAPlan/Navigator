@@ -5,7 +5,7 @@ using Navigator.Core.Exceptions;
 
 namespace Navigator.Crow.Controllers
 {
-    [NavigatorController("crow")]
+    [NavigatorController()]
     public class FailController
     {
         /// <summary>
