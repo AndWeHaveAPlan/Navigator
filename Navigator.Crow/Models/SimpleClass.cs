@@ -1,4 +1,4 @@
-﻿namespace Navigator.Playground.Models
+﻿namespace Navigator.Crow.Models
 {
 
     public class SimpleClass

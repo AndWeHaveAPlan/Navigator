@@ -39,7 +39,7 @@ namespace Navigator.Playground2
 
             var client = host.CreateClient();
             //var result = client.Post<SimpleClass>(new NavigatorAddress("crow", "echo", "Object"), 1, "ttt", new SimpleClass { S1 = "sdfs", I1 = 55 }).Result;
-            var result = client.Post<SimpleClass>(new NavigatorAddress("crow", "echo", "Object"), 1, "ttt").Result;
+            var result = client.Post<SimpleClass>(new NavigatorAddress("crow", "echo", "Object"), 1, "ttt", new SimpleClass() { I1 = 10, S1 = "eee__" }).Result;
 
 
             Console.WriteLine("Hello World!");

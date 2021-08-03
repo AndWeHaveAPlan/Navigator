@@ -1,10 +1,10 @@
 ﻿using System;
 using Immaterium.Transports.RabbitMQ;
 using Navigator.Core;
-using Navigator.Playground.Models;
+using Navigator.Crow.Models;
 using RabbitMQ.Client;
 
-namespace Navigator.Playground
+namespace Navigator.Crow
 {
     class Program
     {

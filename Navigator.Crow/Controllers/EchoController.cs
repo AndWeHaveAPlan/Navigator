@@ -3,7 +3,7 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using Navigator.Core.Attributes;
 
-namespace Navigator.Playground.Controllers
+namespace Navigator.Crow.Controllers
 {
     [NavigatorController("crow", Interface = "echo")]
     public class EchoController

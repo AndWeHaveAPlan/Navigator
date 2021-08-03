@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 namespace Navigator.Core
 {
     [Serializable]
-    public class ActionResult<TValue> where TValue : class
+    public class ActionResult<TValue>
     {
         [Required]
         public int ResultCode { get; set; }
@@ -21,7 +21,7 @@ namespace Navigator.Core
 
         public ActionResult()
         {
-            Value = default(TValue);
+            Value = default;
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace Navigator.Core
         /// <param name="value"></param>
         public static implicit operator ActionResult<TValue>(ActionResult<Empty> value)
         {
-            return new ActionResult<TValue>(null)
+            return new ActionResult<TValue>()
             {
                 ErrorMessage = value.ErrorMessage,
                 ResultCode = value.ResultCode
