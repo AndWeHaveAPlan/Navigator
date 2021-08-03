@@ -32,7 +32,7 @@ namespace Navigator.Core.Pipeline.Middleware
 
             ControllerAction controllerAction = context.ControllerAction;
 
-            object returnedObject = await InvokeControllerMethod(controllerAction, requestMessage, context);
+            object returnedObject = await InvokeControllerMethod(controllerAction, context);
 
             if (requestMessage.Type == ImmateriumMessageType.Request)
             {
@@ -46,12 +46,11 @@ namespace Navigator.Core.Pipeline.Middleware
         /// 
         /// </summary>
         /// <param name="controllerAction"></param>
-        /// <param name="immateriumMessage"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        private async Task<object> InvokeControllerMethod(ControllerAction controllerAction, ImmateriumMessage immateriumMessage, NavigatorContext context)
+        private async Task<object> InvokeControllerMethod(ControllerAction controllerAction, NavigatorContext context)
         {
-            object controllerInstance = CreateController(controllerAction.ControllerType, immateriumMessage, context);
+            object controllerInstance = CreateController(controllerAction.ControllerType, context);
 
             object[] invokeParams = context.RequestParameters;
 
@@ -89,10 +88,9 @@ namespace Navigator.Core.Pipeline.Middleware
         /// 
         /// </summary>
         /// <param name="controllerType"></param>
-        /// <param name="immateriumMessage"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        private object CreateController(Type controllerType, ImmateriumMessage immateriumMessage, NavigatorContext context)
+        private object CreateController(Type controllerType, NavigatorContext context)
         {
             try
             {

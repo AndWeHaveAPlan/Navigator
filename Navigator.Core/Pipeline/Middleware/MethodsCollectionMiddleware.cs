@@ -16,7 +16,7 @@ namespace Navigator.Core.Pipeline.Middleware
         /// 
         /// </summary>
         // TODO fix
-        private readonly ILogger _logger = null;//TbxLogger.TbxLogger.GetLogger<MethodsCollectionMiddleware>();
+        private readonly ILogger _logger;
 
         /// <summary>
         /// 
@@ -36,15 +36,14 @@ namespace Navigator.Core.Pipeline.Middleware
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="serviceName"></param>
         /// <param name="assemblyToCollect"></param>
         /// <param name="serviceCollection"></param>
-        public MethodsCollectionMiddleware(string serviceName, Assembly assemblyToCollect, IServiceCollection serviceCollection)
+        public MethodsCollectionMiddleware(Assembly assemblyToCollect, IServiceCollection serviceCollection)
         {
             _logger = serviceCollection.BuildServiceProvider()
                 .GetRequiredService<ILogger<MethodsCollectionMiddleware>>();
 
-            CollectControllersMethods(serviceName, assemblyToCollect);
+            CollectControllersMethods(assemblyToCollect);
             CollectEventControllersMethods(assemblyToCollect);
 
             foreach (var keyValuePair in _interfaces)
@@ -137,9 +136,8 @@ namespace Navigator.Core.Pipeline.Middleware
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="name"></param>
         /// <param name="assembly"></param>
-        private void CollectControllersMethods(string name, Assembly assembly)
+        private void CollectControllersMethods(Assembly assembly)
         {
             IEnumerable<Type> controllers =
                 assembly.GetExportedTypes()

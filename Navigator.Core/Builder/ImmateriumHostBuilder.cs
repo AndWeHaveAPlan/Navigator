@@ -148,7 +148,7 @@ namespace Navigator.Core.Builder
 
             pipelineBuilder.Use(new ExceptionHandlingMiddleware());
             pipelineBuilder.Use(new SerializationMiddleware());
-            pipelineBuilder.Use(new MethodsCollectionMiddleware(host.Name, Assembly.GetCallingAssembly(), serviceCollection));
+            pipelineBuilder.Use(new MethodsCollectionMiddleware(Assembly.GetCallingAssembly(), serviceCollection));
             _startup?.Configure(pipelineBuilder);
             pipelineBuilder.Use(new DeserializationMiddleware());
             pipelineBuilder.Use(new NavigatorMiddleware());

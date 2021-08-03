@@ -26,7 +26,7 @@ namespace Navigator.Core.Client
     public class NavigatorClient : INavigatorClient
     {
         private readonly ImmateriumHost _host;
-        private readonly ILogger _logger;
+        private readonly ILogger<NavigatorClient> _logger;
         private readonly IEnumerable<INavigatorSerializer> _navigatorSerializers;
 
         /// <summary>
@@ -48,6 +48,8 @@ namespace Navigator.Core.Client
         /// 
         /// </summary>
         /// <param name="host"></param>
+        /// <param name="logger"></param>
+        /// <param name="navigatorSerializers"></param>
         public NavigatorClient(ImmateriumHost host, ILogger<NavigatorClient> logger, IEnumerable<INavigatorSerializer> navigatorSerializers)
         {
             _host = host;

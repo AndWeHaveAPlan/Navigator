@@ -261,9 +261,9 @@ namespace Navigator.Core
         /// <param name="durable"></param>
         public void Subscribe(string serviceName, bool durable = true)
         {
-            var subscriber = new Subscriber(message =>
+            var subscriber = new Subscriber(async message =>
             {
-                //TODO: logic
+                await HandleEvent(message);
             });
 
             _imClient.SubscribeRaw(serviceName, subscriber, durable);
