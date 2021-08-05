@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using Navigator.Core.Client;
 using Navigator.Core.Exceptions.Middleware;
 using Navigator.Core.Pipeline;
-using Navigator.Core.Pipeline.Middleware; //using Navigator.Exceptions.Middleware;
+using Navigator.Core.Pipeline.Middleware;
 
 namespace Navigator.Core.Builder
 {
@@ -119,6 +119,7 @@ namespace Navigator.Core.Builder
             serviceCollection.AddLogging(builder =>
             {
                 builder.AddSimpleConsole();
+                builder.AddDebug();
             });
 
             var container = serviceCollection.BuildServiceProvider();
@@ -157,7 +158,7 @@ namespace Navigator.Core.Builder
             container = serviceCollection.BuildServiceProvider();
             serviceScopeFactory = container.GetRequiredService<IServiceScopeFactory>();
 
-            host.ServiceProvider = container;
+            host.Services = container;
             host.ServiceScopeFactory = serviceScopeFactory;
             host.Pipeline = pipelineBuilder.Pipeline;
 

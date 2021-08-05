@@ -2,7 +2,6 @@
 using System.Globalization;
 using System.Linq;
 using Navigator.Core.Attributes;
-using Navigator.Crow.DataTypes;
 
 namespace Navigator.Crow.Controllers
 {

@@ -98,7 +98,7 @@ namespace Navigator.Core.Pipeline.Middleware
                 object controllerInstance = context.ServiceProvider.GetRequiredService(controllerType);
 
                 /*typeof(BaseNavigatorController).GetProperty("Logger")
-                    .SetValue(controllerInstance, context.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger(controllerType.Name));
+                    .SetValue(controllerInstance, context.Services.GetRequiredService<ILoggerFactory>().CreateLogger(controllerType.Name));
 
                 typeof(BaseNavigatorController).GetProperty("Context")
                     .SetValue(controllerInstance, context);

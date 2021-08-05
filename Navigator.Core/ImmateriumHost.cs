@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Immaterium;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Navigator.Core.Builder;
 using Navigator.Core.Client;
@@ -20,7 +22,7 @@ namespace Navigator.Core
     /// <summary>
     /// 
     /// </summary>
-    public sealed class ImmateriumHost : IDisposable
+    public sealed class ImmateriumHost : IHost
     {
         /// <summary>
         /// 
@@ -51,7 +53,6 @@ namespace Navigator.Core
         }
 
         public IServiceScopeFactory ServiceScopeFactory;
-        public ServiceProvider ServiceProvider;
 
         /// <summary>
         /// 
@@ -99,17 +100,6 @@ namespace Navigator.Core
                 else
                     HandleEvent(e.ReceivedMessage).Wait();
             };*/
-        }
-
-        /// <summary>
-        /// Starts listening
-        /// </summary>
-        public void Start()
-        {
-            _tcs = new TaskCompletionSource<bool>();
-
-            _imClient.Listen();
-            Started?.Invoke(this, null);
         }
 
         /// <summary>
@@ -170,15 +160,6 @@ namespace Navigator.Core
         }
 
         /// <summary>
-        /// Runs a host and block the calling thread until host shutdown.
-        /// </summary>
-        public void Run()
-        {
-            Start();
-            _tcs.Task.GetAwaiter().GetResult();
-        }
-
-        /// <summary>
         /// 
         /// </summary>
         /// <param name="message"></param>
@@ -208,7 +189,7 @@ namespace Navigator.Core
         {
             try
             {
-                var serializer = ServiceProvider.GetServices<INavigatorSerializer>().First();
+                var serializer = Services.GetServices<INavigatorSerializer>().First();
                 var message = new ImmateriumMessage(headers);
                 message.Body = serializer.CreateBody(body);
 
@@ -230,7 +211,7 @@ namespace Navigator.Core
 
         internal async Task Publish(NavigatorAddress navigatorAddress, params object[] body)
         {
-            var serializer = ServiceProvider.GetServices<INavigatorSerializer>().First();
+            var serializer = Services.GetServices<INavigatorSerializer>().First();
 
             var bytes = serializer.CreateBody(body);
 
@@ -268,7 +249,7 @@ namespace Navigator.Core
         public NavigatorClient CreateClient()
         {
             //TODO: logger
-            return new NavigatorClient(this, null, ServiceProvider.GetServices<INavigatorSerializer>());
+            return new NavigatorClient(this, null, Services.GetServices<INavigatorSerializer>());
         }
 
         /// <summary>
@@ -279,5 +260,24 @@ namespace Navigator.Core
             _imClient?.Dispose();
             _imClient = null;
         }
+
+        #region IHost
+
+        public Task StartAsync(CancellationToken cancellationToken = new CancellationToken())
+        {
+            _imClient.Listen();
+            return Task.CompletedTask;
+            //throw new NotImplementedException();
+        }
+
+        public Task StopAsync(CancellationToken cancellationToken = new CancellationToken())
+        {
+            _imClient.StopListen();
+            return Task.CompletedTask;
+        }
+
+        #endregion
+
+        public IServiceProvider Services { get; internal set; }
     }
 }

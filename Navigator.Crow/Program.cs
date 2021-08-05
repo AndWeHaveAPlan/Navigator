@@ -1,8 +1,7 @@
 ﻿using System;
 using Immaterium.Transports.RabbitMQ;
+using Microsoft.Extensions.Hosting;
 using Navigator.Core;
-using Navigator.Crow.Models;
-using RabbitMQ.Client;
 
 namespace Navigator.Crow
 {

@@ -12,8 +12,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Navigator.Playground", "Navigator.Playground\Navigator.Playground.csproj", "{97E24AF3-B9AD-453F-A7D1-10E5B4CCDAE7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Navigator.Playground2", "Navigator.Playground2\Navigator.Playground2.csproj", "{3344BD78-B30F-4279-83B2-6FD5315107E3}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Navigator.Crow", "Navigator.Crow\Navigator.Crow.csproj", "{41CCBFFE-4946-484C-8631-BE048780835A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Navigator.HttpGateway", "Navigator.HttpGateway\Navigator.HttpGateway.csproj", "{7F698A5B-1122-44C1-A812-37BCCF71C1D0}"
@@ -32,10 +30,6 @@ Global
 		{97E24AF3-B9AD-453F-A7D1-10E5B4CCDAE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{97E24AF3-B9AD-453F-A7D1-10E5B4CCDAE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{97E24AF3-B9AD-453F-A7D1-10E5B4CCDAE7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3344BD78-B30F-4279-83B2-6FD5315107E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3344BD78-B30F-4279-83B2-6FD5315107E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3344BD78-B30F-4279-83B2-6FD5315107E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3344BD78-B30F-4279-83B2-6FD5315107E3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{41CCBFFE-4946-484C-8631-BE048780835A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{41CCBFFE-4946-484C-8631-BE048780835A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41CCBFFE-4946-484C-8631-BE048780835A}.Release|Any CPU.ActiveCfg = Release|Any CPU

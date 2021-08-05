@@ -1,5 +1,6 @@
 ﻿using System;
 using Immaterium.Transports.RabbitMQ;
+using Microsoft.Extensions.Hosting;
 using Navigator.Core;
 using Navigator.Playground.Models;
 using RabbitMQ.Client;

@@ -1,17 +1,10 @@
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using Immaterium.Transports.RabbitMQ;
 using Microsoft.Extensions.DependencyInjection;
 using Navigator.Core;
 using Navigator.Core.Client;
-using RabbitMQ.Client;
 
 namespace Navigator.HttpGateway
 {
@@ -22,7 +15,7 @@ namespace Navigator.HttpGateway
             var immateriumHost = BuildHost();
             //immateriumHost.Start();
             Assembly.GetEntryAssembly();
-            CreateHostBuilder(immateriumHost).Build().Run();
+            CreateHostBuilder((ImmateriumHost)immateriumHost).Build().Run();
         }
 
         public static IHostBuilder CreateHostBuilder(ImmateriumHost immateriumHost) =>
@@ -36,7 +29,7 @@ namespace Navigator.HttpGateway
                     webBuilder.UseStartup<Startup>();
                 });
 
-        public static ImmateriumHost BuildHost()
+        public static IHost BuildHost()
         {
             return
                 ImmateriumHost.CreateDefaultBuilder()
