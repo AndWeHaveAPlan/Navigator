@@ -10,9 +10,9 @@ namespace Navigator.Crow.Controllers
     public class MultiParamController
     {
         [NavigatorMethod]
-        public MathResponse Sum(params double[] args)
+        public double Sum(params double[] args)
         {
-            return new MathResponse { Result = args.Sum() };
+            return args.Sum();
         }
 
         [NavigatorMethod]

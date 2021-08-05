@@ -96,5 +96,28 @@ namespace Navigator.Core
         {
             return $"{Service}{Separator}{Interface}{Separator}{Method}";
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static implicit operator NavigatorAddress(string fullString)
+        {
+            var address = new NavigatorAddress();
+
+            if (fullString == null)
+                return address;
+
+            string[] parts = fullString.Split(Separator);
+
+            if (parts.Length > 3 || parts.Length == 0)
+                throw new ArgumentException("invalid NavigatorAddress format", nameof(fullString));
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                address._strings[2 - i] = parts[i];
+            }
+
+            return address;
+        }
     }
 }

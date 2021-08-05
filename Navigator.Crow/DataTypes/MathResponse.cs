@@ -2,6 +2,6 @@
 {
     public class MathResponse
     {
-        public double Result;
+        public double Result { get; set; }
     }
 }

@@ -31,7 +31,7 @@ namespace Navigator.Core.Exceptions.Middleware
 
 
                     INavigatorSerializer navigatorSerializer = new JsonNavigatorSerializer();
-                    context.Response.Body = navigatorSerializer.CreateBody(response);
+                    context.Response.Body = navigatorSerializer.CreateBody(new object[] { response });
                 }
             }
         }

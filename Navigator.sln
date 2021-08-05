@@ -16,6 +16,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Navigator.Playground2", "Na
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Navigator.Crow", "Navigator.Crow\Navigator.Crow.csproj", "{41CCBFFE-4946-484C-8631-BE048780835A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Navigator.HttpGateway", "Navigator.HttpGateway\Navigator.HttpGateway.csproj", "{7F698A5B-1122-44C1-A812-37BCCF71C1D0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +40,10 @@ Global
 		{41CCBFFE-4946-484C-8631-BE048780835A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41CCBFFE-4946-484C-8631-BE048780835A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41CCBFFE-4946-484C-8631-BE048780835A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F698A5B-1122-44C1-A812-37BCCF71C1D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F698A5B-1122-44C1-A812-37BCCF71C1D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F698A5B-1122-44C1-A812-37BCCF71C1D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F698A5B-1122-44C1-A812-37BCCF71C1D0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

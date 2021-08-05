@@ -10,26 +10,29 @@ namespace Navigator.Playground
     {
         static void Main(string[] args)
         {
-            var host = BuildHost();
+            var factory = new ConnectionFactory() { };
+            using var connection = factory.CreateConnection();
+
+            var host = BuildHost(connection);
 
             Console.WriteLine("Hello World!");
 
-            var client = host.CreateClient();
+            //var client = host.CreateClient();
 
             host.Run();
 
 
-            var result = client.Post<SimpleClass>(new NavigatorAddress("crow", "echo", "Object"), 1, "ttt").Result;
+            //var result = client.Post<SimpleClass>(new NavigatorAddress("crow", "echo", "Object"), 1, "ttt").Result;
 
 
             Console.WriteLine("Hello World!");
 
         }
 
-        public static ImmateriumHost BuildHost()
+        public static ImmateriumHost BuildHost(IConnection connection)
         {
-            var factory = new ConnectionFactory() { };
-            using var connection = factory.CreateConnection();
+            //var factory = new ConnectionFactory() { };
+            //using var connection = factory.CreateConnection();
 
             return
                 ImmateriumHost.CreateDefaultBuilder()

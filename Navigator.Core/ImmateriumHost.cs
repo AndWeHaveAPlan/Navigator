@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using Immaterium;
 using Microsoft.Extensions.DependencyInjection;
@@ -49,12 +48,10 @@ namespace Navigator.Core
         {
             _logger = logger;
             _immateriumTransport = immateriumTransport;
-            _httpListener = new HttpListener();
         }
 
         public IServiceScopeFactory ServiceScopeFactory;
         public ServiceProvider ServiceProvider;
-        private readonly HttpListener _httpListener;
 
         /// <summary>
         /// 
@@ -231,27 +228,22 @@ namespace Navigator.Core
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="method"></param>
-        /// <param name="body"></param>
-        /// <returns></returns>
-        internal async Task Publish(string method, params object[] body)
+        internal async Task Publish(NavigatorAddress navigatorAddress, params object[] body)
         {
             var serializer = ServiceProvider.GetServices<INavigatorSerializer>().First();
 
             var bytes = serializer.CreateBody(body);
 
-            //string bodyString = JsonSerializerWrapper.Serialize(new[] { body });
-            var message = new ImmateriumMessage
+            var eventMessage = new ImmateriumMessage
             {
                 Type = ImmateriumMessageType.Event,
                 Body = bytes
             };
-            message.Headers["Method"] = method;
+            eventMessage.Headers["Method"] = navigatorAddress.Method;
+            eventMessage.Headers["Interface"] = navigatorAddress.Interface;
+            eventMessage.Headers.Sender = navigatorAddress.Service;
 
-            _imClient.Publish(bytes);
+            await _imClient.PublishRaw(eventMessage);
         }
 
         /// <summary>
@@ -275,6 +267,7 @@ namespace Navigator.Core
         /// <returns></returns>
         public NavigatorClient CreateClient()
         {
+            //TODO: logger
             return new NavigatorClient(this, null, ServiceProvider.GetServices<INavigatorSerializer>());
         }
 
@@ -283,7 +276,6 @@ namespace Navigator.Core
         /// </summary>
         public void Dispose()
         {
-            _httpListener?.Stop();
             _imClient?.Dispose();
             _imClient = null;
         }

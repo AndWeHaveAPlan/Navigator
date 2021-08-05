@@ -14,12 +14,14 @@ namespace Navigator.Crow
 
             Console.WriteLine("Hello World!");
 
-            var client = host.CreateClient();
+            //var client = host.CreateClient();
+
+            host.Subscribe("crow", false);
 
             host.Run();
 
 
-            var result = client.Post<SimpleClass>(new NavigatorAddress("crow", "echo", "Object"), 1, "ttt").Result;
+            //var result = client.Post<SimpleClass>(new NavigatorAddress("crow", "echo", "Object"), 1, "ttt").Result;
 
 
             Console.WriteLine("Hello World!");
@@ -28,12 +30,9 @@ namespace Navigator.Crow
 
         public static ImmateriumHost BuildHost()
         {
-            var factory = new ConnectionFactory() { };
-            using var connection = factory.CreateConnection();
-
             return
                 ImmateriumHost.CreateDefaultBuilder()
-                    .UseTransport(new RabbitMqTransport(connection))
+                    .UseTransport(new RabbitMqTransport())
                     .UseServiceName("crow")
                     .UseOrder(MessageProcessingOrder.Parallel)
                     .Build();
