@@ -116,10 +116,10 @@ namespace Navigator.Core.Builder
             serviceCollection.AddSingleton<INavigatorSerializer>(new JsonNavigatorSerializer());
             _startup?.ConfigureServices(serviceCollection);
 
-            serviceCollection.AddLogging();
-
-            //serviceCollection.a
-            //ConsoleLogger
+            serviceCollection.AddLogging(builder =>
+            {
+                builder.AddSimpleConsole();
+            });
 
             var container = serviceCollection.BuildServiceProvider();
             var serviceScopeFactory = container.GetRequiredService<IServiceScopeFactory>();
@@ -135,10 +135,6 @@ namespace Navigator.Core.Builder
             };
 
             host.Initialize();
-
-            //logger.LogInformation("creating host " + host.Name);
-
-            //serviceCollection.AddLogging(builder => { builder.AddProvider(new NavigatorLoggerProvider()); });
 
             //TODO client factory
             serviceCollection.AddTransient(services => host.CreateClient());
