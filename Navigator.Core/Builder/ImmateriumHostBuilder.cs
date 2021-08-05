@@ -1,6 +1,8 @@
 ﻿using System.Reflection;
+using System.Threading;
 using Immaterium;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Navigator.Core.Client;
 using Navigator.Core.Exceptions.Middleware;
@@ -122,6 +124,8 @@ namespace Navigator.Core.Builder
                 builder.AddDebug();
             });
 
+            serviceCollection.AddSingleton<IHostApplicationLifetime, NavigatorHostApplicationLifetime>();
+
             var container = serviceCollection.BuildServiceProvider();
             var serviceScopeFactory = container.GetRequiredService<IServiceScopeFactory>();
 
@@ -166,5 +170,25 @@ namespace Navigator.Core.Builder
 
             return host;
         }
+    }
+
+    //TODO: assign tokens
+    public class NavigatorHostApplicationLifetime : IHostApplicationLifetime
+    {
+        public NavigatorHostApplicationLifetime()
+        {
+            ApplicationStarted = new CancellationToken();
+            ApplicationStopping = new CancellationToken();
+            ApplicationStopped = new CancellationToken();
+        }
+
+        public void StopApplication()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public CancellationToken ApplicationStarted { get; }
+        public CancellationToken ApplicationStopping { get; }
+        public CancellationToken ApplicationStopped { get; }
     }
 }
