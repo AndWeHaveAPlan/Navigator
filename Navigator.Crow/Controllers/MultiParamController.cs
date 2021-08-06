@@ -44,9 +44,9 @@ namespace Navigator.Crow.Controllers
 
     public class DoubleWrapper
     {
-        public double Value;
-        public double ValueSquared;
-        public string ValueString;
+        public double Value { get; set; }
+        public double ValueSquared { get; set; }
+        public string ValueString { get; set; }
     }
 }
 

@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Navigator.Crow": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

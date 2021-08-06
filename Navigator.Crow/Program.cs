@@ -31,7 +31,7 @@ namespace Navigator.Crow
         {
             return
                 ImmateriumHost.CreateDefaultBuilder()
-                    .UseTransport(new RabbitMqTransport())
+                    .UseTransport(new RabbitMqTransport("amqp://10.20.10.242:5672/"))
                     .UseServiceName("crow")
                     .UseOrder(MessageProcessingOrder.Parallel)
                     .Build();

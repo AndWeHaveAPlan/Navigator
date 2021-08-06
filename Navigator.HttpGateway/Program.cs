@@ -26,14 +26,15 @@ namespace Navigator.HttpGateway
                     {
                         collection.AddScoped<NavigatorClient>(provider => immateriumHost.CreateClient());
                     });
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder.UseStartup<Startup>()
+                        .UseUrls("http://+:80");
                 });
 
         public static IHost BuildHost()
         {
             return
                 ImmateriumHost.CreateDefaultBuilder()
-                    .UseTransport(new RabbitMqTransport())
+                    .UseTransport(new RabbitMqTransport("amqp://10.20.10.242:5672/"))
                     .UseServiceName("http_gateway")
                     .UseOrder(MessageProcessingOrder.Parallel)
                     .Build();
